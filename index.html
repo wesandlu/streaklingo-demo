@@ -60,5 +60,21 @@
     System.import('./index.js').catch(function(err) { console.error(err); })
 </script>
 
+<script>
+  // Works around a Cocos web-mobile engine timing bug where the initial
+  // matchMedia-driven screen-size adaptation can fire before the game
+  // container has a real layout size ("_updateAdaptResult Invalid size"
+  // in the console), leaving the canvas stuck at the wrong size until
+  // something dispatches a fresh resize. Happens far more reliably over a
+  // real network (GitHub Pages) than on localhost, since the slower script
+  // load shifts when that first event fires relative to page layout. A
+  // real device normally fixes this itself on the next orientation/resize
+  // event; dispatch one ourselves shortly after load so a first-time
+  // visitor isn't left staring at a near-blank screen.
+  window.addEventListener("load", function () {
+    setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 300);
+  });
+</script>
+
 </body>
 </html>
